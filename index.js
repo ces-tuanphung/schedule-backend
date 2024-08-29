@@ -9,6 +9,7 @@ const {
   deleteDoc,
   query,
   where,
+  orderBy
 } = require("firebase/firestore");
 const { Schedule, db } = require("./config");
 
@@ -45,7 +46,6 @@ app.get("/schedules/filter", async (req, res) => {
 //create new schedule
 app.post("/schedules", async (req, res) => {
   const data = req.body;
-
   try {
     const scheduleData = {
       status: STATUS.PENDING,
@@ -61,9 +61,13 @@ app.post("/schedules", async (req, res) => {
 //get all schedules
 app.get("/schedules", async (req, res) => {
   try {
-    const data = await getDocs(Schedule);
-    const schedules = data.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    res.send(schedules);
+    const q = query(Schedule, orderBy("date","asc"));
+    const querySchedules = await getDocs(q)
+    const sortSchedule = querySchedules.docs.map((schedule) => ({
+      id: schedule.id,
+      ...schedule.data()
+    }))
+    res.send(sortSchedule)
   } catch (err) {
     res.status(500).send({ error: "Error fetching schedules: " + err.message });
   }
