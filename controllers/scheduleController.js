@@ -1,3 +1,5 @@
+const { StatusCodes } = require("http-status-codes");
+
 class ScheduleController {
   constructor(scheduleModel) {
     this.scheduleModel = scheduleModel;
@@ -8,12 +10,12 @@ class ScheduleController {
       const { status } = req.query;
       const schedules = await this.scheduleModel.getSchedulesByStatus(status);
       if (!schedules.length) {
-        return res.status(404).send({ error: "Not found" });
+        return res.status(StatusCodes.NOT_FOUND).send({ error: "Not found" });
       }
       res.send(schedules);
     } catch (err) {
       res
-        .status(500)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error querying schedules: " + err.message });
     }
   }
@@ -27,7 +29,7 @@ class ScheduleController {
         schedule: newSchedule,
       });
     } catch (err) {
-      res.status(500).send({ error: "Error adding schedule: " + err.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "Error adding schedule: " + err.message });
     }
   }
 
@@ -37,7 +39,7 @@ class ScheduleController {
       res.send(schedules);
     } catch (err) {
       res
-        .status(500)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error fetching schedules: " + err.message });
     }
   }
@@ -46,12 +48,12 @@ class ScheduleController {
     try {
       const schedule = await this.scheduleModel.getScheduleById(req.params.id);
       if (!schedule) {
-        return res.status(404).send({ error: "Schedule not found" });
+        return res.status(StatusCodes.NOT_FOUND).send({ error: "Schedule not found" });
       }
       res.send(schedule);
     } catch (err) {
       res
-        .status(500)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error fetching schedule: " + err.message });
     }
   }
@@ -65,7 +67,7 @@ class ScheduleController {
       res.send({ schedule: updatedSchedule });
     } catch (err) {
       res
-        .status(500)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error updating schedule: " + err.message });
     }
   }
@@ -76,7 +78,7 @@ class ScheduleController {
       res.send({ msg: "Schedule deleted successfully." });
     } catch (err) {
       res
-        .status(500)
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error deleting schedule: " + err.message });
     }
   }
