@@ -1,14 +1,11 @@
-const { StatusCodes } = require("http-status-codes");
+import { StatusCodes } from "http-status-codes";
+import { ScheduleModel } from "../models/scheduleModel.js";
 
-class ScheduleController {
-  constructor(scheduleModel) {
-    this.scheduleModel = scheduleModel;
-  }
-
-  async filterSchedules(req, res) {
+export const ScheduleController = {
+  filterSchedules: async (req, res) => {
     try {
       const { status } = req.query;
-      const schedules = await this.scheduleModel.getSchedulesByStatus(status);
+      const schedules = await ScheduleModel.getSchedulesByStatus(status);
       if (!schedules.length) {
         return res.status(StatusCodes.NOT_FOUND).send({ error: "Not found" });
       }
@@ -18,37 +15,41 @@ class ScheduleController {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error querying schedules: " + err.message });
     }
-  }
+  },
 
-  async createSchedule(req, res) {
+  createSchedule: async (req, res) => {
     try {
       const scheduleData = { status: "PENDING", ...req.body };
-      const newSchedule = await this.scheduleModel.createSchedule(scheduleData);
+      const newSchedule = await ScheduleModel.createSchedule(scheduleData);
       res.send({
         msg: "Added new schedule successfully.",
         schedule: newSchedule,
       });
     } catch (err) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: "Error adding schedule: " + err.message });
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send({ error: "Error adding schedule: " + err.message });
     }
-  }
+  },
 
-  async getAllSchedules(req, res) {
+  getAllSchedules: async (req, res) => {
     try {
-      const schedules = await this.scheduleModel.getAllSchedules();
+      const schedules = await ScheduleModel.getAllSchedules();
       res.send(schedules);
     } catch (err) {
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error fetching schedules: " + err.message });
     }
-  }
+  },
 
-  async getScheduleById(req, res) {
+  getScheduleById: async (req, res) => {
     try {
-      const schedule = await this.scheduleModel.getScheduleById(req.params.id);
+      const schedule = await ScheduleModel.getScheduleById(req.params.id);
       if (!schedule) {
-        return res.status(StatusCodes.NOT_FOUND).send({ error: "Schedule not found" });
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .send({ error: "Schedule not found" });
       }
       res.send(schedule);
     } catch (err) {
@@ -56,11 +57,11 @@ class ScheduleController {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error fetching schedule: " + err.message });
     }
-  }
+  },
 
-  async updateSchedule(req, res) {
+  updateSchedule: async (req, res) => {
     try {
-      const updatedSchedule = await this.scheduleModel.updateSchedule(
+      const updatedSchedule = await ScheduleModel.updateSchedule(
         req.params.id,
         req.body
       );
@@ -70,18 +71,16 @@ class ScheduleController {
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error updating schedule: " + err.message });
     }
-  }
+  },
 
-  async deleteSchedule(req, res) {
+  deleteSchedule: async (req, res) => {
     try {
-      await this.scheduleModel.deleteSchedule(req.params.id);
+      await ScheduleModel.deleteSchedule(req.params.id);
       res.send({ msg: "Schedule deleted successfully." });
     } catch (err) {
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .send({ error: "Error deleting schedule: " + err.message });
     }
-  }
-}
-
-module.exports = ScheduleController;
+  },
+};
