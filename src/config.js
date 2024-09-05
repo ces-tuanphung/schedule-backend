@@ -1,18 +1,11 @@
-// Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection } from "firebase/firestore";
+import { getDatabase, ref } from "firebase/database";
 import { setLogLevel } from "firebase/app";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCdQYanhnpQ9IKBFJL2W2AAfUol2LDbm20",
   authDomain: "express-react-firebase.firebaseapp.com",
+  databaseURL: "https://express-react-firebase-default-rtdb.asia-southeast1.firebasedatabase.app/", // Add Realtime Database URL
   projectId: "express-react-firebase",
   storageBucket: "express-react-firebase.appspot.com",
   messagingSenderId: "405577617829",
@@ -20,10 +13,13 @@ const firebaseConfig = {
   measurementId: "G-8N7RW99CTZ",
 };
 
-// // Initialize Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const Schedule = collection(db, "schedules");
+
+// Initialize Realtime Database
+const db = getDatabase(app);
+const scheduleRef = ref(db, "schedules"); // Reference to the "schedules" node in Realtime Database
+
 setLogLevel("error");
 
-export { db, Schedule };
+export { db, scheduleRef };
